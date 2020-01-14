@@ -1,0 +1,17 @@
+{
+  "name": "frontmatter",
+  "description": "very simple frontmatter parsing",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "worc <curtis.s.mcallister@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
+    "babel-jest": "^24.9.0",
+    "eslint": "^6.8.0",
+    "eslint-plugin-jest": "^23.6.0",
+    "jest": "^24.9.0"
+  }
+}
