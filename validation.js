@@ -3,10 +3,8 @@
  * @param {array} previousLines
  */
 function anyPreviousLineStartsList ({ previousLines }) {
-  const previousLinesReversed = previousLines.reverse()
-
   // todo, deal with a later list (with bad syntax) seeing an earlier list with proper syntax and incorrectly saying things are a-ok
-  previousLinesReversed.some(line => line.endsWith(':'))
+  return previousLines.some(line => line.endsWith(':'))
 }
 
 /**
@@ -14,14 +12,14 @@ function anyPreviousLineStartsList ({ previousLines }) {
  * @param {string} line
  * @param {number} index
  * @param {array} array
- * @param {string} nextLine
+ * @param {string} [nextLine]
  */
 export default function validateFrontmatterLine ({ line, index, array, nextLine }) {
   const startsWithColon = line.startsWith(':')
   const hasColon = line.includes(':')
   const endsWithColon = line.endsWith(':')
   const startsWithDash = line.startsWith('-')
-  const nextLineStartsWithDash = nextLine.startsWith('-')
+  const nextLineStartsWithDash = nextLine === undefined ? false : nextLine.startsWith('-')
   const previousLines = array.slice(0, index)
 
   if (startsWithColon) {
@@ -108,4 +106,6 @@ export default function validateFrontmatterLine ({ line, index, array, nextLine 
           - list item
     `)
   }
+
+  return true
 }
