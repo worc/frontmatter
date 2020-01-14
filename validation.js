@@ -1,3 +1,7 @@
+export const KEY_VALUE_PAIR = 'key_value_pair'
+export const BEGINNING_OF_LIST = 'beginning_of_list'
+export const LIST_ITEM = 'list_item'
+
 /**
  *
  * @param {array} previousLines
@@ -107,5 +111,15 @@ export default function validateFrontmatterLine ({ line, index, array, nextLine 
     `)
   }
 
-  return true
+  if (endsWithColon) {
+    return BEGINNING_OF_LIST
+  }
+
+  if (hasColon && !endsWithColon) {
+    return KEY_VALUE_PAIR
+  }
+
+  if (startsWithDash) {
+    return LIST_ITEM
+  }
 }

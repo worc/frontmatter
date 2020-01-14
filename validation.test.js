@@ -1,4 +1,4 @@
-import validateFrontmatterLine from './validation'
+import validateFrontmatterLine, { BEGINNING_OF_LIST, KEY_VALUE_PAIR, LIST_ITEM } from './validation'
 
 describe('errors', () => {
   test('throw an error if a line starts with a colon', () => {
@@ -62,7 +62,7 @@ describe('valid frontmatter', () => {
       nextLine: undefined,
     }
 
-    expect(validateFrontmatterLine(testFrontmatter)).toBe(true)
+    expect(validateFrontmatterLine(testFrontmatter)).toBe(KEY_VALUE_PAIR)
   })
 
   test('beginning of a list followed by a list item is valid', () => {
@@ -75,7 +75,7 @@ describe('valid frontmatter', () => {
       nextLine,
     }
 
-    expect(validateFrontmatterLine(testFrontmatter)).toBe(true)
+    expect(validateFrontmatterLine(testFrontmatter)).toBe(BEGINNING_OF_LIST)
   })
 
   test('a list item in the middle of a list, with a previous list starter, is valid', () => {
@@ -90,6 +90,6 @@ describe('valid frontmatter', () => {
       nextLine,
     }
 
-    expect(validateFrontmatterLine(testFrontmatter)).toBe(true)
+    expect(validateFrontmatterLine(testFrontmatter)).toBe(LIST_ITEM)
   })
 })
