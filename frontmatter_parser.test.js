@@ -64,3 +64,63 @@ describe('error propagation', () => {
     expect(() => parseFrontmatter({ frontmatter: badFrontmatter})).toThrow()
   })
 })
+
+describe('valid frontmatter', () => {
+  test('a key-value pair delimited by a colons is trimmed and converted to a javascript object', () => {
+    const goodFrontmatter = `
+    a simple key: value pair
+  `
+    const parsedFrontmatter = {
+      'a simple key': 'value pair',
+    }
+
+    expect(parseFrontmatter({ frontmatter: goodFrontmatter })).toMatchObject(parsedFrontmatter)
+  })
+
+  test('key-value pairs are trimmed, converted to a javascript object', () => {
+    const goodFrontmatter = `
+    a simple key: value pair
+    and another key: with it's own value     
+    one more key      :      for goood luck    
+  `
+    const parsedFrontmatter = {
+      'a simple key': 'value pair',
+      'and another key': 'with it\'s own value',
+      'one more key': 'for goood luck',
+    }
+
+    expect(parseFrontmatter({ frontmatter: goodFrontmatter })).toMatchObject(parsedFrontmatter)
+  })
+
+  test('lists are named by the string left of the colon and contain items marked by dashes', () => {
+    const goodFrontmatter = `
+      a list:
+        - list item one
+        - list item two
+    `
+
+    expect(parseFrontmatter({ frontmatter: goodFrontmatter })).toMatchObject({
+      'a list': ['list item one', 'list item two'],
+    })
+  })
+})
+
+describe('a realistic frontmatter string', () => {
+  const realisticFrontmatter = `
+    authors:
+      - the smoot
+      - stxalq
+    date: the year of our lord 2020
+    description: we write our own frontmatter parser "because we can"
+  `
+  const parsedFrontmatter = {
+    authors: [
+      'the smoot',
+      'stxalq',
+    ],
+    date: 'the year of our lord 2020',
+    description: 'we write our own frontmatter parser "because we can"',
+  }
+
+  expect(parseFrontmatter({ frontmatter: realisticFrontmatter })).toMatchObject(parsedFrontmatter)
+})
