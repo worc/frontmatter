@@ -103,6 +103,30 @@ describe('valid frontmatter', () => {
       'a list': ['list item one', 'list item two'],
     })
   })
+
+  test('lists parse correctly when list item contains extra dashes', () => {
+    const goodFrontmatter = `
+      a list:
+        - list item - with some - dashes - one
+        - list item two
+    `
+
+    expect(parseFrontmatter({ frontmatter: goodFrontmatter })).toMatchObject({
+      'a list': ['list item - with some - dashes - one', 'list item two'],
+    })
+  })
+})
+
+test('list items can contain colons (but don\'t create nested objects)', () => {
+  const goodFrontmatter = `
+      a list:
+        - list : with some colons
+        - testing a list item that ends with a colon:
+    `
+
+  expect(parseFrontmatter({ frontmatter: goodFrontmatter })).toMatchObject({
+    'a list': ['list : with some colons', 'testing a list item that ends with a colon:'],
+  })
 })
 
 describe('a realistic frontmatter string', () => {
