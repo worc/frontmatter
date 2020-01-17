@@ -1,4 +1,5 @@
 import validateFrontmatterLine, { BEGINNING_OF_LIST, KEY_VALUE_PAIR, LIST_ITEM } from './validation'
+import parseFrontmatter from './frontmatter_parser'
 
 describe('errors', () => {
   test('throw an error if a line starts with a colon', () => {
@@ -88,6 +89,43 @@ describe('valid frontmatter', () => {
       index: 1,
       array: [listStarter, firstListItem, testLine, nextLine],
       nextLine,
+    }
+
+    expect(validateFrontmatterLine(testFrontmatter)).toBe(LIST_ITEM)
+  })
+
+  test('a list item can contain extra dashes', () => {
+    const testLine = '- list item - with some - dashes - one'
+    const nextLine = '- list item two'
+    const testFrontmatter = {
+      line: testLine,
+      index: 1,
+      array: ['a list:', testLine, nextLine],
+      nextLine,
+    }
+
+    expect(validateFrontmatterLine(testFrontmatter)).toBe(LIST_ITEM)
+  })
+
+  test('a list item can contain a colon', () => {
+    const testLine = '- list : with some colons'
+    const testFrontmatter = {
+      line: testLine,
+      index: 1,
+      array: ['a list:', testLine],
+      nextLine: undefined,
+    }
+
+    expect(validateFrontmatterLine(testFrontmatter)).toBe(LIST_ITEM)
+  })
+
+  test('a list item can end with a colon', () => {
+    const testLine = '- list : with some colons:'
+    const testFrontmatter = {
+      line: testLine,
+      index: 1,
+      array: ['a list:', testLine],
+      nextLine: undefined,
     }
 
     expect(validateFrontmatterLine(testFrontmatter)).toBe(LIST_ITEM)

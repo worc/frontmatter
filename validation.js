@@ -62,7 +62,7 @@ export default function validateFrontmatterLine ({ line, index, array, nextLine 
     `)
   }
 
-  if (endsWithColon && !nextLineStartsWithDash) {
+  if (endsWithColon && !startsWithDash && !nextLineStartsWithDash) {
     throw new Error(`
       Couldn't parse metadata list:
 
@@ -111,15 +111,14 @@ export default function validateFrontmatterLine ({ line, index, array, nextLine 
     `)
   }
 
+  if (startsWithDash) {
+    return LIST_ITEM
+  }
+
   if (endsWithColon) {
     return BEGINNING_OF_LIST
   }
-
   if (hasColon && !endsWithColon) {
     return KEY_VALUE_PAIR
-  }
-
-  if (startsWithDash) {
-    return LIST_ITEM
   }
 }
