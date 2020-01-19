@@ -77,6 +77,17 @@ describe('valid frontmatter', () => {
     expect(parseFrontmatter({ frontmatter: goodFrontmatter })).toMatchObject(parsedFrontmatter)
   })
 
+  test('a key-value pair is split only on the first colon', () => {
+    const goodFrontmatter = `
+      key: and value: with: colons
+    `
+    const parsedFrontmatter = {
+      key: 'and value: with: colons',
+    }
+
+    expect(parseFrontmatter({ frontmatter: goodFrontmatter })).toMatchObject(parsedFrontmatter)
+  })
+
   test('key-value pairs are trimmed, converted to a javascript object', () => {
     const goodFrontmatter = `
     a simple key: value pair

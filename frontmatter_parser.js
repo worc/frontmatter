@@ -30,7 +30,11 @@ export default function parseFrontmatter ({ frontmatter: frontmatterString }) {
   parsedFrontmatterList.forEach(parsedFrontmatterLine => {
     if (parsedFrontmatterLine.type === KEY_VALUE_PAIR) {
       const key = parsedFrontmatterLine.line.split(':', 2)[0].trim()
-      const value = parsedFrontmatterLine.line.split(':', 2)[1].trim()
+      const value = parsedFrontmatterLine.line
+        .split(':')
+        .slice(1)
+        .join(':')
+        .trim()
 
       parsedFrontmatter[key] = value
     }
