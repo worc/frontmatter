@@ -1,53 +1,35 @@
-import validateFrontmatterLine from './validation'
+import frontmatterParser from './frontmatter_parser'
 
-function removeEmptyLines () {
+/**
+ *
+ * @param {string} content
+ * @returns {{frontmatter: {}, body: string}}
+ */
+export default function frontmatter ({ content }) {
+  const startsWithThreeDashes = content.trim().startsWith('---')
 
+  if (!startsWithThreeDashes) {
+    throw new Error(`
+      Frontmatter content must start with three dashes:
+      
+      ---
+      key: value
+      list:
+        - item one
+        - item two
+      ---
+    `)
+  }
+
+  const splitter = new RegExp(/^---$/m)
+  const frontmatterString = content.trim().split(splitter)[1]
+  const contentString = content.trim().split(splitter)[2].trim()
+
+  const frontmatter = frontmatterParser({ frontmatter: frontmatterString })
+  const body = contentString
+
+  return {
+    frontmatter,
+    body,
+  }
 }
-
-console.log('hello world')
-
-const testString = `
-frontmatter: of some kind
-some more front matter: this one has lots to say
-
-some front matter with: trailing spaces            
-       leading spaces: and still some frontmatter
-
----
-
-and now content
-
-content
-content
-
-ok but what if
-
----
-
-there were lots of splits?
-
----
-`
-
-console.log(testString.split('---', 2))
-
-const parsed = {}
-
-parsed.content = testString.split('---', 2)[1]
-
-console.log(parsed)
-
-const unparsedFrontmatter = testString.split('---', 2)[0]
-
-console.log(unparsedFrontmatter)
-
-const parsedFrontmatter = {}
-
-const frontMatterLines = unparsedFrontmatter.split(/\n/g)
-
-console.log(frontMatterLines)
-
-const frontMatterBlankLinesRemoved = frontMatterLines.filter(line => line.length > 0).map(line => line.trim())
-
-console.log(frontMatterBlankLinesRemoved)
-
