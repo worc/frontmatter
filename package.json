@@ -1,7 +1,7 @@
 {
   "name": "frontmatter",
   "version": "1.0.0",
-  "description": "very simple frontmatter parsing",
+  "description": "a very simple frontmatter parser",
   "scripts": {
     "build": "webpack -p",
     "dry": "npm publish . --dry-run",
