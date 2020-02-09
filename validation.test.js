@@ -1,5 +1,4 @@
 import validateFrontmatterLine, { BEGINNING_OF_LIST, KEY_VALUE_PAIR, LIST_ITEM } from './validation'
-import parseFrontmatter from './frontmatter_parser'
 
 describe('errors', () => {
   test('throw an error if a line starts with a colon', () => {
