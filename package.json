@@ -1,6 +1,6 @@
 {
   "name": "frontmatter-js",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "a very simple frontmatter parser",
   "scripts": {
     "build": "webpack -p",
