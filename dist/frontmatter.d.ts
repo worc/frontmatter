@@ -1,6 +1,10 @@
+import type { Frontmatter } from './frontmatter_parser.ts';
+export type { Frontmatter };
 export interface FrontmatterResult {
-  frontmatter: Record<string, string | string[]>
-  body: string
+    frontmatter: Frontmatter;
+    body: string;
 }
-
-export default function frontmatter(options: { content: string }): FrontmatterResult
+export default function frontmatter({ content }: {
+    content: string;
+}): FrontmatterResult;
+//# sourceMappingURL=frontmatter.d.ts.map

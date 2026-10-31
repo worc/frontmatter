@@ -1,12 +1,9 @@
-import validateFrontmatterLine, { BEGINNING_OF_LIST, KEY_VALUE_PAIR, LIST_ITEM } from './validation'
+import validateFrontmatterLine, { BEGINNING_OF_LIST, KEY_VALUE_PAIR, LIST_ITEM } from './validation.ts'
 
-/**
- *
- * @param {string} frontmatterString
- * @returns {{}}
- */
-export default function parseFrontmatter ({ frontmatter: frontmatterString }) {
-  const parsedFrontmatter = {}
+export type Frontmatter = Record<string, string | Array<string>>
+
+export default function parseFrontmatter ({ frontmatter: frontmatterString }: { frontmatter: string }): Frontmatter {
+  const parsedFrontmatter: Frontmatter = {}
   const frontMatterBlankLinesRemoved = frontmatterString
     .split(/\n/g)
     .map(line => line.trim())
@@ -26,7 +23,8 @@ export default function parseFrontmatter ({ frontmatter: frontmatterString }) {
     }
   })
 
-  let currentList = ''
+  // lists are built up in a local array and assigned by name, so a list item can never land on a string value
+  let currentList: Array<string> = []
   parsedFrontmatterList.forEach(parsedFrontmatterLine => {
     if (parsedFrontmatterLine.type === KEY_VALUE_PAIR) {
       const key = parsedFrontmatterLine.line.split(':', 2)[0].trim()
@@ -40,8 +38,9 @@ export default function parseFrontmatter ({ frontmatter: frontmatterString }) {
     }
 
     if (parsedFrontmatterLine.type === BEGINNING_OF_LIST) {
-      currentList = parsedFrontmatterLine.line.split(':', 2)[0].trim()
-      parsedFrontmatter[currentList] = []
+      const listName = parsedFrontmatterLine.line.split(':', 2)[0].trim()
+      currentList = []
+      parsedFrontmatter[listName] = currentList
     }
 
     if (parsedFrontmatterLine.type === LIST_ITEM) {
@@ -51,7 +50,7 @@ export default function parseFrontmatter ({ frontmatter: frontmatterString }) {
         .join('-')
         .trim()
 
-      parsedFrontmatter[currentList].push(value)
+      currentList.push(value)
     }
   })
 

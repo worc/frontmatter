@@ -1,4 +1,6 @@
-import validateFrontmatterLine, { BEGINNING_OF_LIST, KEY_VALUE_PAIR, LIST_ITEM } from './validation'
+import { describe, test } from 'node:test'
+import assert from 'node:assert/strict'
+import validateFrontmatterLine, { BEGINNING_OF_LIST, KEY_VALUE_PAIR, LIST_ITEM } from './validation.ts'
 
 describe('errors', () => {
   test('throw an error if a line starts with a colon', () => {
@@ -10,7 +12,7 @@ describe('errors', () => {
       nextLine: undefined,
     }
 
-    expect(() => validateFrontmatterLine(testFrontmatter)).toThrow()
+    assert.throws(() => validateFrontmatterLine(testFrontmatter))
   })
 
   test('throw an error if a line has no colon and does not start with a dash', () => {
@@ -22,7 +24,7 @@ describe('errors', () => {
       nextLine: undefined,
     }
 
-    expect(() => validateFrontmatterLine(testFrontmatter)).toThrow()
+    assert.throws(() => validateFrontmatterLine(testFrontmatter))
   })
 
   test('throw an error if starting a list, but the next line is not a list item', () => {
@@ -35,7 +37,7 @@ describe('errors', () => {
       nextLine: testNextLine,
     }
 
-    expect(() => validateFrontmatterLine(testFrontmatter).toThrow())
+    assert.throws(() => validateFrontmatterLine(testFrontmatter))
   })
 
   test('throw an error if a list item does not have a list starter as one of its previous lines', () => {
@@ -48,7 +50,7 @@ describe('errors', () => {
       nextLine: undefined,
     }
 
-    expect(() => validateFrontmatterLine(testFrontmatter).toThrow())
+    assert.throws(() => validateFrontmatterLine(testFrontmatter))
   })
 })
 
@@ -62,7 +64,7 @@ describe('valid frontmatter', () => {
       nextLine: undefined,
     }
 
-    expect(validateFrontmatterLine(testFrontmatter)).toBe(KEY_VALUE_PAIR)
+    assert.equal(validateFrontmatterLine(testFrontmatter), KEY_VALUE_PAIR)
   })
 
   test('beginning of a list followed by a list item is valid', () => {
@@ -75,7 +77,7 @@ describe('valid frontmatter', () => {
       nextLine,
     }
 
-    expect(validateFrontmatterLine(testFrontmatter)).toBe(BEGINNING_OF_LIST)
+    assert.equal(validateFrontmatterLine(testFrontmatter), BEGINNING_OF_LIST)
   })
 
   test('a list item in the middle of a list, with a previous list starter, is valid', () => {
@@ -90,7 +92,7 @@ describe('valid frontmatter', () => {
       nextLine,
     }
 
-    expect(validateFrontmatterLine(testFrontmatter)).toBe(LIST_ITEM)
+    assert.equal(validateFrontmatterLine(testFrontmatter), LIST_ITEM)
   })
 
   test('a list item can contain extra dashes', () => {
@@ -103,7 +105,7 @@ describe('valid frontmatter', () => {
       nextLine,
     }
 
-    expect(validateFrontmatterLine(testFrontmatter)).toBe(LIST_ITEM)
+    assert.equal(validateFrontmatterLine(testFrontmatter), LIST_ITEM)
   })
 
   test('a list item can contain a colon', () => {
@@ -115,7 +117,7 @@ describe('valid frontmatter', () => {
       nextLine: undefined,
     }
 
-    expect(validateFrontmatterLine(testFrontmatter)).toBe(LIST_ITEM)
+    assert.equal(validateFrontmatterLine(testFrontmatter), LIST_ITEM)
   })
 
   test('a list item can end with a colon', () => {
@@ -127,6 +129,6 @@ describe('valid frontmatter', () => {
       nextLine: undefined,
     }
 
-    expect(validateFrontmatterLine(testFrontmatter)).toBe(LIST_ITEM)
+    assert.equal(validateFrontmatterLine(testFrontmatter), LIST_ITEM)
   })
 })

@@ -1,4 +1,6 @@
-import parseFrontmatter from './frontmatter_parser'
+import { describe, test } from 'node:test'
+import assert from 'node:assert/strict'
+import parseFrontmatter from './frontmatter_parser.ts'
 
 describe('error propagation', () => {
   test('throw an error if the first line starts with a colon', () => {
@@ -6,7 +8,7 @@ describe('error propagation', () => {
       : very bad
       and then some good: key value pairing
     `
-    expect(() => parseFrontmatter({ frontmatter: badFrontmatter})).toThrow()
+    assert.throws(() => parseFrontmatter({ frontmatter: badFrontmatter}))
   })
 
   test('throw an error if the second line starts with a colon', () => {
@@ -14,7 +16,7 @@ describe('error propagation', () => {
       and then some good: key value pairing
       : very bad
     `
-    expect(() => parseFrontmatter({ frontmatter: badFrontmatter})).toThrow()
+    assert.throws(() => parseFrontmatter({ frontmatter: badFrontmatter}))
   })
 
   test('throw an error if a line has no colon and does not start with a dash', () => {
@@ -25,7 +27,7 @@ describe('error propagation', () => {
         - still good
       and then the bad happens
     `
-    expect(() => parseFrontmatter({ frontmatter: badFrontmatter})).toThrow()
+    assert.throws(() => parseFrontmatter({ frontmatter: badFrontmatter}))
   })
 
   test('throw an error if a list is started correctly, but the first list item syntax is incorrect', () => {
@@ -38,7 +40,7 @@ describe('error propagation', () => {
         and then it goes wrong
         - this list item is okay
     `
-    expect(() => parseFrontmatter({ frontmatter: badFrontmatter})).toThrow()
+    assert.throws(() => parseFrontmatter({ frontmatter: badFrontmatter}))
   })
 
   test('throw an error if a list is started correctly, but the second list item syntax is incorrect', () => {
@@ -51,7 +53,7 @@ describe('error propagation', () => {
         - this list item is okay
         and then it goes wrong
     `
-    expect(() => parseFrontmatter({ frontmatter: badFrontmatter})).toThrow()
+    assert.throws(() => parseFrontmatter({ frontmatter: badFrontmatter}))
   })
 
   test('throw an error if a list item does not have a starter as one of its previous lines', () => {
@@ -61,7 +63,7 @@ describe('error propagation', () => {
         - another one
         and then it goes wrong
     `
-    expect(() => parseFrontmatter({ frontmatter: badFrontmatter})).toThrow()
+    assert.throws(() => parseFrontmatter({ frontmatter: badFrontmatter}))
   })
 })
 
@@ -74,7 +76,7 @@ describe('valid frontmatter', () => {
       'a simple key': 'value pair',
     }
 
-    expect(parseFrontmatter({ frontmatter: goodFrontmatter })).toMatchObject(parsedFrontmatter)
+    assert.deepEqual(parseFrontmatter({ frontmatter: goodFrontmatter }), parsedFrontmatter)
   })
 
   test('a key-value pair is split only on the first colon', () => {
@@ -85,7 +87,7 @@ describe('valid frontmatter', () => {
       key: 'and value: with: colons',
     }
 
-    expect(parseFrontmatter({ frontmatter: goodFrontmatter })).toMatchObject(parsedFrontmatter)
+    assert.deepEqual(parseFrontmatter({ frontmatter: goodFrontmatter }), parsedFrontmatter)
   })
 
   test('key-value pairs are trimmed, converted to a javascript object', () => {
@@ -100,7 +102,7 @@ describe('valid frontmatter', () => {
       'one more key': 'for goood luck',
     }
 
-    expect(parseFrontmatter({ frontmatter: goodFrontmatter })).toMatchObject(parsedFrontmatter)
+    assert.deepEqual(parseFrontmatter({ frontmatter: goodFrontmatter }), parsedFrontmatter)
   })
 
   test('lists are named by the string left of the colon and contain items marked by dashes', () => {
@@ -110,7 +112,7 @@ describe('valid frontmatter', () => {
         - list item two
     `
 
-    expect(parseFrontmatter({ frontmatter: goodFrontmatter })).toMatchObject({
+    assert.deepEqual(parseFrontmatter({ frontmatter: goodFrontmatter }), {
       'a list': ['list item one', 'list item two'],
     })
   })
@@ -122,7 +124,7 @@ describe('valid frontmatter', () => {
         - list item two
     `
 
-    expect(parseFrontmatter({ frontmatter: goodFrontmatter })).toMatchObject({
+    assert.deepEqual(parseFrontmatter({ frontmatter: goodFrontmatter }), {
       'a list': ['list item - with some - dashes - one', 'list item two'],
     })
   })
@@ -135,7 +137,7 @@ test('list items can contain colons (but don\'t create nested objects)', () => {
         - testing a list item that ends with a colon:
     `
 
-  expect(parseFrontmatter({ frontmatter: goodFrontmatter })).toMatchObject({
+  assert.deepEqual(parseFrontmatter({ frontmatter: goodFrontmatter }), {
     'a list': ['list : with some colons', 'testing a list item that ends with a colon:'],
   })
 })
@@ -157,5 +159,21 @@ describe('a realistic frontmatter string', () => {
     description: 'we write our own frontmatter parser "because we can"',
   }
 
-  expect(parseFrontmatter({ frontmatter: realisticFrontmatter })).toMatchObject(parsedFrontmatter)
+  test('parses to the expected object', () => {
+    assert.deepEqual(parseFrontmatter({ frontmatter: realisticFrontmatter }), parsedFrontmatter)
+  })
+})
+
+test('a key-value pair after a list is not swallowed by the list', () => {
+  const goodFrontmatter = `
+    tags:
+      - one
+      - two
+    title: after the list
+  `
+
+  assert.deepEqual(parseFrontmatter({ frontmatter: goodFrontmatter }), {
+    tags: ['one', 'two'],
+    title: 'after the list',
+  })
 })

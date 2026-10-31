@@ -1,0 +1,23 @@
+{
+  // Editor + `npm run typecheck`: everything, tests included. Never emits.
+  // The flags here are the ones that keep source runnable by Node's type stripping as-is.
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "target": "ES2022",
+    "types": ["node"],
+    "strict": true,
+    "skipLibCheck": true,
+    "noEmit": true,
+
+    // Node runs .ts directly by erasing types, so imports name the real file (./validation.ts)...
+    "allowImportingTsExtensions": true,
+    // ...tsc rewrites those to .js when it does emit (tsconfig.build.json)...
+    "rewriteRelativeImportExtensions": true,
+    // ...and only erasable syntax is allowed: no enums, namespaces, or constructor parameter properties.
+    "erasableSyntaxOnly": true,
+    // Type-only imports must say so (`import { type X }`), since a stripper can't look across files to tell.
+    "verbatimModuleSyntax": true
+  },
+  "include": ["src/"]
+}

@@ -2,23 +2,21 @@ export const KEY_VALUE_PAIR = 'key_value_pair'
 export const BEGINNING_OF_LIST = 'beginning_of_list'
 export const LIST_ITEM = 'list_item'
 
-/**
- *
- * @param {array} previousLines
- */
-function anyPreviousLineStartsList ({ previousLines }) {
+export type LineType = typeof KEY_VALUE_PAIR | typeof BEGINNING_OF_LIST | typeof LIST_ITEM
+
+export interface ValidateLineOptions {
+  line: string
+  index: number
+  array: Array<string>
+  nextLine?: string
+}
+
+function anyPreviousLineStartsList ({ previousLines }: { previousLines: Array<string> }): boolean {
   // todo, deal with a later list (with bad syntax) seeing an earlier list with proper syntax and incorrectly saying things are a-ok
   return previousLines.some(line => line.endsWith(':'))
 }
 
-/**
- *
- * @param {string} line
- * @param {number} index
- * @param {array} array
- * @param {string} [nextLine]
- */
-export default function validateFrontmatterLine ({ line, index, array, nextLine }) {
+export default function validateFrontmatterLine ({ line, index, array, nextLine }: ValidateLineOptions): LineType {
   const startsWithColon = line.startsWith(':')
   const hasColon = line.includes(':')
   const endsWithColon = line.endsWith(':')
@@ -29,14 +27,14 @@ export default function validateFrontmatterLine ({ line, index, array, nextLine 
   if (startsWithColon) {
     throw new Error(`
       Metadata is missing a key in its key value pair:
-      
+
       ${line}
-      
+
       Metadata should have a key left of the colon:
-      
+
         correct:
           key: value
-        
+
         incorrect:
           : value
     `)
@@ -46,7 +44,7 @@ export default function validateFrontmatterLine ({ line, index, array, nextLine 
     throw new Error(`
       Couldn't parse metadata:
 
-      ${line} 
+      ${line}
 
       Metadata must either include a colon separator or start with a dash:
 
@@ -90,21 +88,21 @@ export default function validateFrontmatterLine ({ line, index, array, nextLine 
   if (startsWithDash && !anyPreviousLineStartsList({ previousLines })) {
     throw new Error(`
       List item is not part of a list:
-      
+
       ${line}
-      
+
       Lists items must follow the beginning of a list. Lists are started by omitting text after the colon (indentation doesn't matter):
-      
+
         correct:
           beginning of list:
           - list item
           - another list item
-          
+
           beginning of list:
             - first indented list item
             - second indented list item
           - an unindented list item mixed in
-          
+
         incorrect:
           beginning of list without a colon
           - list item
@@ -118,7 +116,7 @@ export default function validateFrontmatterLine ({ line, index, array, nextLine 
   if (endsWithColon) {
     return BEGINNING_OF_LIST
   }
-  if (hasColon && !endsWithColon) {
-    return KEY_VALUE_PAIR
-  }
+
+  // everything else was ruled out above: no leading dash, so it has a colon that isn't the last character
+  return KEY_VALUE_PAIR
 }

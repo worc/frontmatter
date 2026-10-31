@@ -1,0 +1,14 @@
+{
+  // `npm run build`: emits dist/ for publishing. Tests stay out of the package.
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "noEmit": false,
+    "allowImportingTsExtensions": false,
+    "outDir": "dist",
+    "rootDir": "src",
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true
+  },
+  "exclude": ["src/**/*.test.ts"]
+}
